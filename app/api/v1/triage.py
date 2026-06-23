@@ -33,9 +33,11 @@ def triage(
     db: Session = Depends(get_db)
 ):
 
-    cleaned = Preprocessor.clean_text(
-        payload.raw_message
-    )
+    processed = Preprocessor.process(payload.raw_message)
+
+    cleaned = processed["cleaned"]
+    translated = processed["translated"]
+    language = processed["language"]
 
     contains_code = CodeDetector.detect(
         cleaned
@@ -43,7 +45,7 @@ def triage(
 
     start = time.time()
 
-    ai_result = OllamaService.classify(cleaned)
+    ai_result = OllamaService.classify(translated)
 
     end = time.time()
 
@@ -83,10 +85,10 @@ def triage(
     PersistenceService.save(
     original_message=payload.raw_message,
     cleaned_message=cleaned,
-    translated_message=cleaned,
-    language="unknown",
+    translated_message=translated,
+    language=language,
     result=ai_result
-    )
+)
     
     if ai_result["confidence"] < 0.70:
 

@@ -15,23 +15,24 @@ function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+
   const [categories, setCategories] = useState([]);
   const [priorities, setPriorities] = useState([]);
   const [history, setHistory] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [dashboard, setDashboard] = useState(null); 
+  const [dashboard, setDashboard] = useState(null);
 
-  // ================= LOAD =================
+  const [evaluation, setEvaluation] = useState(null);
+
+  // ================= LOAD DATA (FAST) =================
   const loadData = async () => {
     try {
-      setLoading(true);
-
       const [cat, pri, hist, rev, dash] = await Promise.all([
         axios.get(`${API}/analytics/categories`),
         axios.get(`${API}/analytics/priorities`),
         axios.get(`${API}/history`),
         axios.get(`${API}/review-queue`),
-        axios.get(`${API}/analytics`) 
+        axios.get(`${API}/analytics`)
       ]);
 
       setCategories(
@@ -50,13 +51,10 @@ function App() {
 
       setHistory(hist.data);
       setReviews(rev.data);
-      setDashboard(dash.data); 
+      setDashboard(dash.data);
 
     } catch (err) {
-      console.error(err);
       setError("⚠️ Backend not reachable");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -66,6 +64,8 @@ function App() {
 
   // ================= TRIAGE =================
   const handleSubmit = async () => {
+    if (!message.trim()) return;
+
     try {
       setLoading(true);
       setError("");
@@ -77,7 +77,7 @@ function App() {
       setResult(res.data);
       setMessage("");
 
-      await loadData();
+      loadData();
 
     } catch {
       setError("❌ Triage failed");
@@ -88,17 +88,38 @@ function App() {
 
   // ================= REVIEW =================
   const approve = async (id) => {
-    await axios.post(`${API}/review/approve`, { id });
-    loadData();
+    try {
+      await axios.post(`${API}/review/approve`, { id });
+      loadData();
+    } catch {
+      setError("Approve failed");
+    }
   };
 
   const override = async (id) => {
-    await axios.post(`${API}/review/override`, {
-      id,
-      category: "other",
-      priority: "P1"
-    });
-    loadData();
+    try {
+      await axios.post(`${API}/review/override`, {
+        id,
+        category: "other",
+        priority: "P1"
+      });
+      loadData();
+    } catch {
+      setError("Override failed");
+    }
+  };
+
+  // ================= EVALUATION =================
+  const runEvaluation = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API}/evaluation`);
+      setEvaluation(res.data);
+    } catch {
+      setError("Evaluation failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ================= UI =================
@@ -110,7 +131,7 @@ function App() {
       {error && <p style={{ color: "red" }}>{error}</p>}
       {loading && <p>Loading...</p>}
 
-      {/* ================= EVALUATION PANEL ================= */}
+      {/* ===== METRICS ===== */}
       {dashboard && (
         <div style={grid3}>
           <Metric title="Total Messages" value={dashboard.total_messages} color="#2196F3" />
@@ -119,7 +140,7 @@ function App() {
         </div>
       )}
 
-      {/* ================= TRIAGE ================= */}
+      {/* ===== TRIAGE ===== */}
       <div style={card}>
         <h2>Triage Input</h2>
 
@@ -141,7 +162,7 @@ function App() {
         )}
       </div>
 
-      {/* ================= ANALYTICS ================= */}
+      {/* ===== ANALYTICS ===== */}
       <div style={flexRow}>
 
         <div style={card}>
@@ -173,7 +194,24 @@ function App() {
 
       </div>
 
-      {/* ================= HISTORY ================= */}
+      {/* ===== EVALUATION ===== */}
+      <div style={card}>
+        <h2>Model Evaluation</h2>
+
+        <button style={evalBtn} onClick={runEvaluation}>
+          Run Evaluation
+        </button>
+
+        {evaluation && (
+          <div style={{ marginTop: 10 }}>
+            <p><b>Accuracy:</b> {evaluation.accuracy}</p>
+            <p><b>Correct:</b> {evaluation.correct}</p>
+            <p><b>Total:</b> {evaluation.total}</p>
+          </div>
+        )}
+      </div>
+
+      {/* ===== HISTORY ===== */}
       <div style={card}>
         <h2>History</h2>
         <table style={table}>
@@ -196,7 +234,7 @@ function App() {
         </table>
       </div>
 
-      {/* ================= REVIEW ================= */}
+      {/* ===== REVIEW ===== */}
       <div style={card}>
         <h2>Review Queue</h2>
 
@@ -222,7 +260,7 @@ function App() {
   );
 }
 
-// ================= COMPONENT =================
+// ===== COMPONENT =====
 const Metric = ({ title, value, color }) => (
   <div style={{ ...metricCard, borderLeft: `6px solid ${color}` }}>
     <h4>{title}</h4>
@@ -230,7 +268,7 @@ const Metric = ({ title, value, color }) => (
   </div>
 );
 
-// ================= STYLES =================
+// ===== STYLES =====
 const page = { padding: 30, background: "#f5f7fb", fontFamily: "Segoe UI" };
 const flexRow = { display: "flex", gap: 20, marginTop: 20 };
 const grid3 = { display: "flex", gap: 20, marginBottom: 20 };
@@ -252,8 +290,29 @@ const metricCard = {
 };
 
 const input = { width: "100%", padding: 10, marginBottom: 10 };
-const btn = { padding: "10px 20px", background: "#4CAF50", color: "white", border: "none" };
-const resultBox = { background: "#111", color: "#0f0", padding: 10 };
+
+const btn = {
+  padding: "10px 20px",
+  background: "#4CAF50",
+  color: "white",
+  border: "none",
+  cursor: "pointer"
+};
+
+const evalBtn = {
+  padding: "10px 20px",
+  background: "#2196F3",
+  color: "white",
+  border: "none",
+  cursor: "pointer"
+};
+
+const resultBox = {
+  background: "#111",
+  color: "#0f0",
+  padding: 10,
+  marginTop: 10
+};
 
 const table = { width: "100%", borderCollapse: "collapse" };
 
@@ -264,7 +323,19 @@ const reviewBox = {
   marginBottom: 10
 };
 
-const approveBtn = { background: "#4CAF50", color: "white", marginRight: 10 };
-const overrideBtn = { background: "#F44336", color: "white" };
+const approveBtn = {
+  background: "#4CAF50",
+  color: "white",
+  marginRight: 10,
+  padding: "5px 10px",
+  border: "none"
+};
+
+const overrideBtn = {
+  background: "#F44336",
+  color: "white",
+  padding: "5px 10px",
+  border: "none"
+};
 
 export default App;

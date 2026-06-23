@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from fastapi import Depends
-from app.services.evaluation_service import EvaluationService
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
@@ -41,6 +40,3 @@ def priority_stats(
     )
 
 
-@router.get("/analytics/evaluation")
-def evaluation():
-    return EvaluationService.evaluate()

@@ -17,7 +17,7 @@ from app.api.v1.triage import router as triage_router
 from app.api.v1.history import router as history_router
 from app.models.review_queue import ReviewQueue
 from app.api.v1.review import router as review_router
-
+from app.api.v1.evaluation import router as evaluation_router
 from app.api.v1.analytics import (router as analytics_router)
 
 
@@ -71,6 +71,12 @@ app.include_router(
     analytics_router,
     prefix="/api/v1",
     tags=["Analytics"]
+)
+
+app.include_router(
+    evaluation_router,
+    prefix="/api/v1",
+    tags=["Evaluation"]
 )
 
 @app.get("/")
