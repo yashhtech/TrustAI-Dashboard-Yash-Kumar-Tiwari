@@ -2,27 +2,91 @@
 
 ## 📌 Overview
 
-TrustAI is an intelligent AI-powered system designed to process unstructured, messy, and potentially adversarial customer messages and convert them into structured, actionable decisions.
+TrustAI is an intelligent AI-powered triage system designed to process unstructured, noisy, and potentially adversarial customer messages and convert them into structured, actionable decisions.
 
-It simulates a real-world enterprise support pipeline by combining AI intelligence with deterministic rules and human oversight.
+It combines Large Language Model (LLM) capabilities with deterministic rule-based systems and human-in-the-loop validation to ensure reliable, safe, and explainable outcomes.
 
 ---
 
 ## 🎯 Problem Statement
 
-Modern companies receive a massive volume of customer messages including support requests, complaints, security threats, and random queries. These inputs are often noisy, inconsistent, and sometimes malicious.
+Modern organizations receive high volumes of customer messages including:
 
-TrustAI transforms such raw input into structured decisions containing category, priority, summary, suggested action, confidence, and human escalation signals.
+* Support requests
+* Complaints
+* Billing issues
+* Security threats
+* Multilingual queries
+* Adversarial or abusive inputs
+
+These messages are often inconsistent, messy, and ambiguous.
+
+TrustAI transforms raw input into structured decisions containing:
+
+* Category
+* Priority (P0–P3)
+* Summary
+* Suggested Action
+* Confidence Score
+* Risk Level
+* Sentiment
+* Human Escalation Flag
 
 ---
 
 ## 🧠 System Architecture
 
-The system follows a multi-stage pipeline:
+TrustAI follows a modular multi-stage pipeline:
 
-User Input → Preprocessing → Code Detection → AI Classification → Validation → Rule Engine → Security Engine → Confidence Engine → Sentiment Analysis → Database Storage → Human Review → Dashboard
+User Input
+→ Preprocessing
+→ Language Detection
+→ Translation (if non-English)
+→ AI Classification (LLM via Ollama)
+→ Validation Layer
+→ Rule Engine
+→ Security Engine
+→ Confidence Engine
+→ Sentiment Analysis
+→ Persistence Layer
+→ Human Review Queue
+→ Analytics Dashboard
 
-Each stage ensures reliability, safety, and structured output generation.
+This architecture ensures robustness, interpretability, and production readiness.
+
+---
+
+## 🌍 Multi-Language Support
+
+TrustAI supports multilingual inputs using:
+
+* Automatic language detection (langdetect)
+* Translation to English (deep-translator)
+
+Workflow:
+
+* Detect input language
+* Translate non-English text to English
+* Process using AI + rules
+* Preserve original message
+
+Supported capabilities:
+
+* Hindi, English, Hinglish
+* Mixed-language inputs
+* Noisy or partially translated text
+
+---
+
+## 🤖 AI Classification Layer
+
+The system integrates an Ollama-based LLM to:
+
+* Classify category and priority
+* Generate summaries
+* Suggest actions
+
+This is combined with rule-based overrides to ensure deterministic correctness in critical scenarios.
 
 ---
 
@@ -30,117 +94,207 @@ Each stage ensures reliability, safety, and structured output generation.
 
 ### Preprocessing Layer
 
-Handles noisy input, removes unwanted characters, and prepares text for AI processing.
-
-### AI Classification
-
-Uses a language model to classify messages into categories and priorities, and generate summaries and suggested actions.
+* Cleans noisy text
+* Normalizes spacing
+* Handles malformed input
 
 ### Validation Layer
 
-Ensures all AI outputs are valid, consistent, and within expected ranges.
+* Ensures structured JSON output
+* Enforces schema consistency
+* Prevents invalid predictions
 
 ### Rule Engine
 
-Overrides AI decisions when predefined patterns are detected to ensure deterministic behavior.
+* Applies deterministic overrides
+* Handles edge cases and known patterns
 
 ### Security Engine
 
-Detects high-risk messages such as threats, fraud, and breaches. It forcefully escalates these cases by assigning highest priority and requiring human intervention.
+* Detects high-risk inputs (threats, fraud, abuse)
+* Forces:
+
+  * Category → security
+  * Priority → P0
+  * needs_human → true
 
 ### Confidence Engine
 
-Adjusts confidence scores dynamically and flags uncertain predictions.
+* Adjusts confidence dynamically
+* Flags low-confidence predictions
+* Routes uncertain cases to human review
 
 ### Sentiment Engine
 
-Analyzes emotional tone of the message to assist in escalation and prioritization.
+* Detects emotional tone
+* Helps prioritize escalation
 
 ### Persistence Layer
 
-Stores all data including raw messages, processed results, audit logs, and review queue entries.
+* Stores:
+
+  * Raw messages
+  * AI outputs
+  * Review states
+  * Audit logs
 
 ### Human Review System
 
-Low-confidence or ambiguous cases are routed to a review queue where decisions can be approved or overridden.
+* Handles low-confidence or ambiguous cases
+* Allows:
+
+  * Approval
+  * Override
 
 ### Analytics Dashboard
 
-Provides visual insights including category distribution, priority distribution, history tracking, and review queue management.
+* Category distribution
+* Priority distribution
+* Message history
+* Review queue
+
+---
+
+## 📊 Evaluation System
+
+TrustAI includes a built-in evaluation pipeline:
+
+* Predefined test dataset
+* Automated classification using AI model
+* Accuracy computation
+
+### Metrics:
+
+* Accuracy
+* Total test cases
+* Correct predictions
+
+This ensures measurable performance and supports continuous improvement.
+
+---
+
+## 📡 API Endpoints
+
+Key endpoints include:
+
+* `/triage` → Process new message
+* `/history` → Retrieve processed messages
+* `/review-queue` → Get pending reviews
+* `/review/approve` → Approve decision
+* `/review/override` → Override decision
+* `/analytics` → Dashboard metrics
+* `/analytics/categories` → Category distribution
+* `/analytics/priorities` → Priority distribution
+* `/evaluation` → Run evaluation pipeline
 
 ---
 
 ## 🏗️ Technology Stack
 
-Backend is built using FastAPI and SQLAlchemy with SQLite as the database.
-Frontend is built using React with Axios for API communication and Recharts for visualization.
-The AI layer uses Ollama-based LLM integration.
+### Backend
+
+* FastAPI
+* SQLAlchemy
+* SQLite
+
+### Frontend
+
+* React
+* Axios
+* Recharts
+
+### AI Layer
+
+* Ollama LLM
+
+### NLP Tools
+
+* langdetect (language detection)
+* deep-translator (translation)
 
 ---
 
 ## 📂 Project Structure
 
-The project is divided into backend and frontend layers.
+```
+backend/
+  ├── api/
+  ├── services/
+  ├── models/
+  ├── validators/
+  ├── database/
 
-The backend contains API routes, services, models, validators, and database configuration.
-
-The frontend dashboard handles visualization, user interaction, and real-time updates.
+frontend/
+  ├── dashboard/
+  ├── components/
+```
 
 ---
 
 ## 🚀 Setup Instructions
 
-### Backend Setup
+### Backend
 
-Navigate to the backend folder and install dependencies. Then start the server using Uvicorn. The backend runs locally on port 8000.
+* Install dependencies
+* Run FastAPI server using Uvicorn
+* Default port: 8000
 
-### Frontend Setup
+### Frontend
 
-Navigate to the dashboard folder, install dependencies, and start the React application. The frontend runs locally on port 3000.
-
----
-
-## 📡 API Overview
-
-The system exposes endpoints for triaging messages, retrieving history, managing the review queue, approving decisions, overriding decisions, and fetching analytics data.
+* Install dependencies
+* Start React app
+* Default port: 3000
 
 ---
 
 ## 🧪 Example
 
-Input message:
+**Input:**
 "I will kill you"
 
-Output:
-The system classifies this as a high-risk security issue, assigns top priority, sets confidence to maximum, and flags it for human review.
+**Output:**
+
+* Category: security
+* Priority: P0
+* Risk Level: CRITICAL
+* needs_human: true
+* Confidence: high
 
 ---
 
 ## 🛡️ Reliability and Safety
 
-The system is designed to handle messy, adversarial, and ambiguous inputs. It ensures no unsafe outputs are generated and always escalates critical scenarios.
+TrustAI is designed to:
 
-Security-related messages are always overridden by deterministic rules to avoid reliance on AI uncertainty.
-
----
-
-## 📈 Evaluation Coverage
-
-The system successfully operates end-to-end, processes real-world noisy data, integrates AI with rule-based logic, supports human intervention, and provides a functional dashboard for monitoring and control.
+* Handle adversarial inputs
+* Prevent unsafe outputs
+* Always escalate critical threats
+* Maintain deterministic overrides for security cases
 
 ---
 
 ## ⚡ Production Readiness
 
-The architecture is modular and scalable. Components can be extended or replaced independently.
+The system is modular and extensible.
 
-The system can be upgraded with production-grade tools such as PostgreSQL, Redis caching, message queues, authentication layers, and containerization.
+Possible production upgrades:
+
+* PostgreSQL instead of SQLite
+* Redis caching
+* Queue systems (Kafka / RabbitMQ)
+* Authentication & authorization
+* Containerization (Docker)
+* Cloud deployment
 
 ---
 
 ## 🧠 Design Principles
 
-The system is built on reliability, safety, and explainability. AI decisions are always backed by rules when necessary, and human oversight is always available.
+* Reliability-first
+* Human-in-the-loop
+* Explainable AI decisions
+* Safety over automation
+* Modular architecture
 
 ---
 
@@ -152,6 +306,12 @@ Yash Kumar
 
 ## 🏁 Conclusion
 
-TrustAI demonstrates a practical implementation of an AI-powered triage system that is reliable, secure, and production-oriented.
+TrustAI demonstrates a production-oriented AI triage system that combines:
 
-It combines machine intelligence with deterministic safeguards and human validation to ensure trustworthy decision-making in real-world scenarios.
+* LLM intelligence
+* Rule-based safeguards
+* Multilingual support
+* Evaluation pipeline
+* Human oversight
+
+It provides a scalable and reliable solution for real-world customer message processing.
