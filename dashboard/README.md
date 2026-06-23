@@ -1,70 +1,97 @@
-# Getting Started with Create React App
+# 🚀 TrustAI — Intelligent AI Triage System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An AI-powered system that processes messy customer messages and converts them into structured decisions.
 
-## Available Scripts
+Built for the **Frontline One-Day AI Challenge**
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🎯 Problem
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Companies receive thousands of messy customer messages:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- complaints
+- support requests
+- random questions
+- abusive / adversarial inputs
 
-### `npm test`
+👉 Goal: Automatically convert them into:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- category
+- priority (P0–P3)
+- summary
+- suggested action
+- confidence
+- needs_human
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🧠 Features
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### ✅ AI Triage Pipeline
+- Preprocessing (cleaning text)
+- Code detection
+- AI classification (Ollama)
+- Rule Engine override (security)
+- Confidence scoring
+- Sentiment analysis
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### 🔐 Security Engine
+Detects critical threats like:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- hack / fraud
+- kill / attack
+- breach / stolen
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+➡️ Automatically sets:
+- category = `security`
+- priority = `P0`
+- needs_human = `true`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 🤖 Confidence Engine
+- Boosts confidence based on category/priority
+- Flags low-confidence for human review
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 👨‍💻 Human Review System
+- Review queue for uncertain cases
+- Approve / Override decisions
+- Improves reliability
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+### 📊 Analytics Dashboard (React)
+- Category distribution (Pie Chart)
+- Priority distribution (Bar Chart)
+- History table
+- Review queue UI
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+### 💾 Persistence
+- Messages stored in DB
+- Triage results tracked
+- Audit logs available
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 🏗️ Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Backend
+- FastAPI
+- SQLAlchemy
+- SQLite
 
-### Advanced Configuration
+### Frontend
+- React
+- Axios
+- Recharts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 📂 Project Structure
